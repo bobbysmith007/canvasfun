@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body>
+    <canvas id="canvas" height="600" width="600" style="border:1px solid black;" ></canvas>
+    <script type="text/javascript">
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+      offset = 50;
+      context.translate (offset,offset);      
+
+  
+      var drawRectSpiral = function(theta, iters){
+        theta = theta || 30;
+        iters = iters || 200;
+        frame = 600;
+        box = 500;
+        degToRad = 0.01745329525;
+        context.restore()
+        context.clearRect(0,0,frame,frame)
+        context.save()
+        theta = theta * degToRad
+        /*
+        a^2+b^2=c^2
+        a= c sin theta
+        b= box - a
+        (sin theta)^2*c^2 + (box - c sin theta)^2=c^2
+        */
+        C = box/(Math.sqrt(1-Math.pow(Math.sin(theta),2))+Math.sin(theta));
+        scale = C/box;
+        amount = C * Math.sin(theta);
+        var fn = function(i){
+          context.lineWidth = context.lineWidth*(1/scale);
+          context.strokeRect(0, 0, box, box);
+          context.translate(amount, 0);
+          context.rotate(theta);
+          context.scale(scale,scale);
+        }
+        for (var i=1; i< iters ; i++) fn(i);
+      }
+      drawRectSpiral();
+
+      var frametimer =50;
+      var dTheta = 2;
+      var theta = 0;
+      var asc = true;
+      var maxtheta=90
+      var iter = function(){
+       if(asc){
+         theta += dTheta;
+         if(theta >= (maxtheta-dTheta)) asc=!asc;
+       }
+       else{
+         theta -= dTheta;
+         if(theta <= 0+dTheta) asc = !asc;
+       }
+       drawRectSpiral(theta);
+       window.setTimeout(iter, frametimer);
+      }
+      window.setTimeout(iter, frametimer);
+		 
+    </script>
+  </body>
+</html>
