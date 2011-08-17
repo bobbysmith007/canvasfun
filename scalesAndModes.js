@@ -2,9 +2,9 @@ var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var Ab='Ab',A='A',Bb='Bb', B='B',C='C',Db='Db',D='D',Eb='Eb',
     E='E',Fb='Fb',F='F',Gb='Gb',G='G', T=true, X=false,
-    Ionian = 'Ionian (I)', Dorian = 'Dorian (II)',
+    Ionian = 'Ionian (I) - Major', Dorian = 'Dorian (II)',
     Phrygian = 'Phrygian (III)', Lydian='Lydian (IV)',
-    Mixolydian='Mixolydian (V)', Aeolian='Aeolian (VI)',
+    Mixolydian='Mixolydian (V)', Aeolian='Aeolian (VI) - minor',
     Locrian = 'Locrian (VII)';
 
 var chromaticScale = [  C, Db,  D, Eb,  E,  F, Gb,  G, Ab,  A, Bb,  B];
@@ -72,14 +72,16 @@ var drawRingText = function(diameter, ring, offset){
     if(!ring[i]) continue;
     radStart = (i * (360/12) * degToRad) - (90*degToRad) - offset*dodecaRad;
     context.save();
-    var x =  Math.cos(radStart) * diameter,
-        y =  Math.sin(radStart) * diameter;
+    var text = ringref(ring,i),
+        diam = diameter-(text.length/2)*2.5,
+        x =  Math.cos(radStart) * diam,
+        y =  Math.sin(radStart) * diam;
 
     context.beginPath();
     context.textAlign= 'center';
     context.font = '10pt Arial';
     context.strokeStyle = i==0 ? red : black;
-    context.strokeText(ringref(ring,i), x, y);
+    context.strokeText(text, x, y);
     context.closePath();
     context.restore();
   }
@@ -121,9 +123,9 @@ function noteSummary(scale){
 
 function drawRings(){
   context.clear();
-  drawRingText(240, modeNames, MODE);
-  drawRing(200, majorScale, MODE);
-  drawRingText(175, chromaticScale, KEY);
+  drawRingText(180, modeNames, MODE);
+  drawRing(220, majorScale, MODE);
+  drawRingText(240, chromaticScale, KEY);
   $('.mode .current').text( ringref(modeNames, MODE) );
   $('.key .current').text( ringref(chromaticScale, KEY) );
   $('.notes .current').text(noteSummary(majorScale, MODE+KEY));
