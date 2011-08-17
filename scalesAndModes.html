@@ -1,7 +1,30 @@
 <!DOCTYPE html>
 <html>
-  <head></head>
+  <head>
+    <style>
+      .kill-float { clear:both; }
+      fieldset { float:left; width:200px;}
+      .left{float:left;}
+      .right{float:right;}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" 
+            type="text/javascript" ></script>
+  </head>
   <body>
+    <fieldset class="mode"><legend>Mode</legend>
+      <button class="decMode left" onclick="decMode()">
+        &lt; </button><span class="current">Ionian (I)</span>
+      <button class="incMode right" onclick="incMode()">
+        &gt; </button></fieldset>
+    <fieldset class="key"><legend>Key</legend>
+      <button class="decKey left" onclick="decKey()">
+        &lt; </button><span class="current">C</span>
+      <button class="incKey right" onclick="incKey()">
+        &gt; </button></fieldset>
+    <fieldset class="notes"><legend>Current Notes</legend>
+      <span class="current"></span>
+    </fieldset>
+    <div class="kill-float">&nbsp;</div>
     <canvas id="canvas" height="600" width="600" style="border:1px solid black;" ></canvas>
     <script type="text/javascript" src="scalesAndModes.js" ></script>
   </body>

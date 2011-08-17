@@ -16,12 +16,17 @@ var modeNames      = [Ionian, null, Dorian, null, Phrygian, Lydian, null,
 var ringref = function(ring, i, offset){
   if(!offset) offset = 0;
   i+=offset;
-  while( i > ring.length ) i = i-ring.lenght;
-  while( i < 0 ) i = i+ring.lenght;
+  var l = ring.length;
+  while( i >= l ) i = i-l;
+  while( i <  0 ) i = i+l;
+  //console.log('ringref: ',i, offset, l);
   return ring[i];
 };
 
-var green = 'rgba(0,192,0,255)', white = 'rgba(255,255,255,255)', black = 'rgba(0,0,0,255)';
+var green = 'rgba(0,192,0,255)',
+    red = 'rgba(192,0,0,255)',
+    white = 'rgba(255,255,255,255)',
+    black = 'rgba(0,0,0,255)';
 context.save();
 var height=600, width=600;
 context.clear = function(){
@@ -33,64 +38,99 @@ var degToRad = 0.01745329525;
 var dodecaDeg = (360/12);
 var dodecaRad = dodecaDeg * degToRad;
 
-
-
-var drawRing = function(diameter, ring){
+var drawRing = function(diameter, ring, offset){
   context.save();
   context.translate(300,300);
   context.rotate((-dodecaRad/2) - 90*degToRad);
-
   var i=0, startAngle, endAngle, radStart;
   for(i = 0; i < 12; i++){
-
-    radStart = i * (360/12) * degToRad;
+    radStart = (i * (360/12) * degToRad) - offset*dodecaRad;
     context.save();
-
     context.beginPath();
     context.strokeStyle = green;
     context.lineWidth = 10;
     context.arc(0,0,diameter,radStart,radStart+dodecaRad);
     context.stroke();
     context.closePath();
-
     context.beginPath();
     context.strokeStyle = ring[i] ? black : white;
-
     context.lineWidth = 6;
     context.arc(0,0,diameter,radStart+.02,(radStart+dodecaRad)-.02);
     context.stroke();
     context.closePath();
-
-
     context.restore();
   }
 
   context.restore();
 };
-var drawRingText = function(diameter, ring){
+
+var drawRingText = function(diameter, ring, offset){
   context.save();
   context.translate(300,300);
   var i=0, startAngle, endAngle, radStart;
   for(i = 0; i < 12; i++){
     if(!ring[i]) continue;
-    radStart = (i * (360/12) * degToRad) - (90*degToRad);
+    radStart = (i * (360/12) * degToRad) - (90*degToRad) - offset*dodecaRad;
     context.save();
     var x =  Math.cos(radStart) * diameter,
         y =  Math.sin(radStart) * diameter;
 
     context.beginPath();
     context.textAlign= 'center';
+    context.font = '10pt Arial';
+    context.strokeStyle = i==0 ? red : black;
     context.strokeText(ringref(ring,i), x, y);
-    context.strokeStyle = green;
-    context.lineWidth = 2;
     context.closePath();
     context.restore();
   }
 
   context.restore();
 };
-drawRingText(230, modeNames);
-drawRing(200, majorScale);
-drawRingText(175, chromaticScale);
+
+MODE=0;
+KEY=0;
+function decMode(){
+  MODE--;
+  if(!ringref(majorScale, MODE)) MODE--;
+  drawRings();
+}
+function incMode(){
+  MODE++;
+  if(!ringref(majorScale, MODE)) MODE++;
+  drawRings();
+}
+
+function decKey(){
+  KEY--;
+  if(!ringref(chromaticScale, KEY)) KEY--;
+  drawRings();
+}
+function incKey(){
+  KEY++;
+  if(!ringref(chromaticScale, KEY)) KEY++;
+  drawRings();
+}
+
+function noteSummary(scale){
+  var out=[], i;
+  for(i=0; i<12 ;i++)
+    if(ringref(scale, i, MODE))
+      out.push(ringref(chromaticScale, i, KEY));
+  return out.join(' - ');
+}
+
+function drawRings(){
+  context.clear();
+  drawRingText(240, modeNames, MODE);
+  drawRing(200, majorScale, MODE);
+  drawRingText(175, chromaticScale, KEY);
+  $('.mode .current').text( ringref(modeNames, MODE) );
+  $('.key .current').text( ringref(chromaticScale, KEY) );
+  $('.notes .current').text(noteSummary(majorScale, MODE+KEY));
+}
+
+drawRings();
+
+
 
 
