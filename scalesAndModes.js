@@ -11,11 +11,14 @@ var Ab='Ab',A='A',Bb='Bb', B='B',C='C',Db='Db',D='D',Eb='Eb',
     Mixolydian='Mixolydian (V)', Aeolian='Aeolian (VI) - minor',
     Locrian = 'Locrian (VII)';
 
-var chromaticScale = [  C, Db,  D, Eb,  E,  F, Gb,  G, Ab,  A, Bb,  B];
-var majorScale     = [  T,  X,  T,  X,  T,  T,  X,  T,  X,  T,  X,  T];
-var majorScale2    = [  C,  X,  D,  X,  E,  F,  X,  G,  X,  A,  X,  B];
-var modeNames      = [Ionian, null, Dorian, null, Phrygian, Lydian, null,
-                      Mixolydian, null, Aeolian, null, Locrian];
+var chromaticScale    = [  C, Db,  D, Eb,  E,  F, Gb,  G, Ab,  A, Bb,  B];
+var majorScale        = [  T,  X,  T,  X,  T,  T,  X,  T,  X,  T,  X,  T];
+var melodicMinorScale = [  T,  X,  T,  X,  T,  X,  T,  X,  T,  T,  X,  T];
+var harmonicMinorScale= [  T,  X,  T,  X,  T,  T,  X,  X,  T,  T,  X,  T];
+var modeNames         = [Ionian, null, Dorian, null, Phrygian, Lydian, null,
+                         Mixolydian, null, Aeolian, null, Locrian];
+
+var SCALE= majorScale;
 
 var ringref = function(ring, i, offset){
   if(!offset) offset = 0;
@@ -105,12 +108,12 @@ MODE=0;
 KEY=0;
 function decMode(){
   MODE--;
-  if(!ringref(majorScale, MODE)) MODE--;
+  if(!ringref(SCALE, MODE)) MODE--;
   drawRings();
 }
 function incMode(){
   MODE++;
-  if(!ringref(majorScale, MODE)) MODE++;
+  if(!ringref(SCALE, MODE)) MODE++;
   drawRings();
 }
 
@@ -184,7 +187,7 @@ function drawStaff(scale){
   staffs.tvoice.draw(treblecontext, staffs.treblestaff);
 
   staffs.bassstaff.addClef("bass");
-  console.log( ringref(chromaticScale, KEY) );
+
   // staffs.bassstaff.addKeySignature(ringref(chromaticScale, KEY));
   staffs.bassstaff.setContext(basscontext).draw();
   staffs.bvoice.draw(basscontext, staffs.bassstaff);
@@ -196,12 +199,12 @@ function drawRings(){
   context.clear();
   clearStaves();
   drawRingText(180, modeNames, MODE);
-  drawRing(220, majorScale, MODE);
+  drawRing(220, SCALE, MODE);
   drawRingText(240, chromaticScale, KEY);
   $('.mode .current').text( ringref(modeNames, MODE) );
   $('.key .current').text( ringref(chromaticScale, KEY) );
-  $('.notes .current').text(noteSummary(majorScale, MODE+KEY).join(' - '));
-  drawStaff(majorScale);
+  $('.notes .current').text(noteSummary(SCALE, MODE+KEY).join(' - '));
+  drawStaff(SCALE);
 }
 
 drawRings();
